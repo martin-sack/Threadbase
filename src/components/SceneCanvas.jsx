@@ -7,7 +7,7 @@ import PlaceholderSock from './PlaceholderSock'
 import Pedestal from './Pedestal'
 import FloatingCamera from './FloatingCamera'
 
-export default function SceneCanvas() {
+export default function SceneCanvas({ customColor, logoUrl, fabric }) {
   return (
     <Canvas
       shadows
@@ -42,7 +42,11 @@ export default function SceneCanvas() {
 
       {/* Pedestal and Sock */}
       <Pedestal />
-      <PlaceholderSock />
+      <PlaceholderSock
+        customColor={customColor}
+        logoUrl={logoUrl}
+        fabric={fabric}
+      />
 
       {/* Camera Controls */}
       <OrbitControls

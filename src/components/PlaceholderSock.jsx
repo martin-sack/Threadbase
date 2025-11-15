@@ -1,13 +1,33 @@
-import { useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useRef, useState, useEffect, useMemo } from 'react'
+import { useFrame, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
 
-export default function PlaceholderSock() {
+export default function PlaceholderSock({
+  customColor = '#ff6b9d',
+  logoUrl = null,
+  fabric = { roughness: 0.6, metalness: 0.3 }
+}) {
   const groupRef = useRef()
   const [hovered, setHovered] = useState(false)
   const [clicked, setClicked] = useState(false)
-  const [baseColor] = useState(new THREE.Color('#ff6b9d'))
-  const [pulseColor] = useState(new THREE.Color('#4dabf7'))
+  const baseColor = useMemo(() => new THREE.Color(customColor), [customColor])
+  const pulseColor = useMemo(() => new THREE.Color('#4dabf7'), [])
+  const [logoTexture, setLogoTexture] = useState(null)
+
+  // Load logo texture when logoUrl changes
+  useEffect(() => {
+    if (logoUrl) {
+      const textureLoader = new THREE.TextureLoader()
+      textureLoader.load(logoUrl, (texture) => {
+        texture.wrapS = THREE.RepeatWrapping
+        texture.wrapT = THREE.RepeatWrapping
+        texture.repeat.set(1, 1)
+        setLogoTexture(texture)
+      })
+    } else {
+      setLogoTexture(null)
+    }
+  }, [logoUrl])
 
   useFrame((state) => {
     if (!groupRef.current) return
@@ -60,10 +80,11 @@ export default function PlaceholderSock() {
         <capsuleGeometry args={[0.15, 0.8, 16, 32]} />
         <meshStandardMaterial
           color={clicked ? pulseColor : baseColor}
-          roughness={0.6}
-          metalness={0.3}
+          roughness={fabric.roughness}
+          metalness={fabric.metalness}
           emissive={clicked ? pulseColor : baseColor}
           emissiveIntensity={clicked ? 0.3 : 0.1}
+          map={logoTexture}
         />
       </mesh>
 
@@ -72,8 +93,8 @@ export default function PlaceholderSock() {
         <cylinderGeometry args={[0.15, 0.18, 0.5, 16]} />
         <meshStandardMaterial
           color={clicked ? pulseColor : baseColor}
-          roughness={0.6}
-          metalness={0.3}
+          roughness={fabric.roughness}
+          metalness={fabric.metalness}
           emissive={clicked ? pulseColor : baseColor}
           emissiveIntensity={clicked ? 0.3 : 0.1}
         />
@@ -96,8 +117,8 @@ export default function PlaceholderSock() {
         <sphereGeometry args={[0.12, 16, 16]} />
         <meshStandardMaterial
           color={clicked ? pulseColor : baseColor}
-          roughness={0.6}
-          metalness={0.3}
+          roughness={fabric.roughness}
+          metalness={fabric.metalness}
           emissive={clicked ? pulseColor : baseColor}
           emissiveIntensity={clicked ? 0.3 : 0.1}
         />

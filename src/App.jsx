@@ -1,10 +1,35 @@
+import { useState } from 'react'
 import SceneCanvas from './components/SceneCanvas'
+import CustomizerPanel from './components/CustomizerPanel'
 import './App.css'
 
 function App() {
+  const [customColor, setCustomColor] = useState('#ff6b9d')
+  const [logoUrl, setLogoUrl] = useState(null)
+  const [fabric, setFabric] = useState({ roughness: 0.8, metalness: 0.1 })
+
+  const handleColorChange = (color) => {
+    setCustomColor(color)
+  }
+
+  const handleLogoUpload = (url) => {
+    setLogoUrl(url)
+  }
+
+  const handleFabricChange = (fabricData) => {
+    setFabric({
+      roughness: fabricData.roughness,
+      metalness: fabricData.metalness
+    })
+  }
+
   return (
     <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
-      <SceneCanvas />
+      <SceneCanvas
+        customColor={customColor}
+        logoUrl={logoUrl}
+        fabric={fabric}
+      />
 
       {/* Overlay UI */}
       <div style={{
@@ -29,6 +54,13 @@ function App() {
           Click to pulse • Hover to scale
         </p>
       </div>
+
+      {/* Customizer Panel */}
+      <CustomizerPanel
+        onColorChange={handleColorChange}
+        onLogoUpload={handleLogoUpload}
+        onFabricChange={handleFabricChange}
+      />
     </div>
   )
 }
